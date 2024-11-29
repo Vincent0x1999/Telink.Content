@@ -1,0 +1,360 @@
+﻿
+/*  我的积分  */
+/* .mypointaccount_account{
+    height: 200px;
+    text-align: center;
+    padding: 20px;
+    position: relative;
+}
+.mypointaccount_account .remark{
+    color:#969696;
+}
+.mypointaccount_account .userAmount{
+   margin-bottom: 5px;
+   font-size: 1.8em;
+}
+.button_mypointlogs{
+    background-color: #FBEEDB;
+    color:#7B7042;
+    font-size: 0.8em;
+    padding: 5px;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    position: absolute;
+    top: 40px;
+    right: 0;
+}
+.mypointaccount_account .button{
+    margin: 50px 0 10px 0;
+} */
+
+
+
+
+video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+#videoOverlay {
+    position: absolute;
+    top: 160px;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 20px;
+    font-size: 18px;
+    display: none;
+    z-index: 10;
+    text-align: center;
+    border-radius: 10px;
+    height: 150px;
+    width: 80%;
+}
+
+.videoOverlay_close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: rgba(255, 0, 0, 0.637);
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.close-button:hover {
+    background-color: darkred;
+}
+
+
+
+
+
+
+
+.activity_second{
+    font-size: 1.3em;
+    color:#e96309 ;
+    font-weight: bold;
+}
+
+
+.activitylist>div{
+    margin: 15px 0;
+    background-color: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+}
+.item_Activity_banner{
+    background: linear-gradient(135deg, #F44F2A 25%, #FF6F61 75%);
+    color: #FFF3CD;
+    height: 100px;
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    font-size: 1.7em;
+    font-weight: 800;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+
+}
+.item_Activity_img {
+    height: 120px;
+}
+
+.item_Activity_banner::before,
+.item_Activity_banner::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(255,255,255,0.3) 20%, transparent 20%);
+    background-size: 20px 20px;
+    top: 0;
+    left: 0;
+    opacity: 0.5;
+}
+.item_Activity_banner::after {
+    background: radial-gradient(circle, rgba(255,255,255,0.3) 20%, transparent 20%);
+    background-size: 20px 20px;
+    top: 0;
+    left: 0;
+    transform: rotate(45deg);
+    opacity: 0.3;
+}
+.item_Activity_title{
+    /* font-size: 0.9em; */
+    padding: 5px;
+    background-color: #fff;
+}
+.item_Activity_bottom{
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    
+    padding: 10px 5px;
+    background-color: #fff;
+    display: grid;
+    grid-template-columns: 1fr 150px;
+}
+
+.item_Activity_Advertiser
+{
+    /* font-size: 0.8em; */
+    padding: 5px;
+    display: flex;
+    align-items: center;
+}
+.item_Activity_Advertiser img{
+    width: 20px;
+    height: 20px;
+    border-radius: 10px;
+    margin-right: 5px;
+    
+}
+.item_Activity_Advertiser .remark{
+    color: #969696;
+    font: 1em sans-serif;
+    margin-left: 5px;
+}
+
+
+.item_Activity_Reward{
+    display: flex;
+    gap: 3px;
+    font-size: 0.8em;
+    margin: 3px 5px;
+    text-align: center;
+}
+.activity_ext_jia {
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 15px 15px;
+    padding: 3px 8px;
+    border-color: #969696;
+    background-image: url('https://vincent0x1999.github.io/Telink.Content/img/icon/jia.png');
+}
+.activity_ext_reward{
+    /* border: #6e6e6e34 1px solid; */
+    border-radius: 5px;
+    padding: 3px;
+}
+.activity_ext_reward_done{
+    border: #13CE6D 1px solid;
+    background-color: #13ce6d48;
+    border-radius: 5px;
+    padding: 3px;
+}
+.activity_ext_reward_num {
+    background-position: 5px center;
+    background-repeat: no-repeat;
+    background-size: 17px 17px;
+    padding: 3px 5px 3px 25px;
+    border-color: #969696;
+    background-image: url('https://vincent0x1999.github.io/Telink.Content/img/icon/money.png');
+}
+
+
+.specialActivity_title{
+    color: #fff;
+    font-size: 1.5em;
+    font-weight: bold;
+    margin: 30px 0 10px 0;
+}
+.specialActivity_item{
+    margin: 0 30px 10px 30px;
+    height: 250px;
+}
+.specialActivity_item_img{
+    height: 180px;
+    border-radius: 10px;
+    margin-bottom: 5px;
+}
+/* .specialActivity_item_img img{
+    height: 100%;
+} */
+.activitylotter_prize{
+    margin: 50px 30px 10px 30px;
+    position: relative;
+    overflow:visible;
+    padding: 0px;
+}
+
+
+.activitylotter_prize_img,.activitylotter_prize_currency{
+    height: 220px;
+    text-align: center;
+    position: relative;
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 10px;
+}
+.activitylotter_prize_currency {
+    background-position: center -10px;
+    background-repeat: no-repeat;
+    background-image: url('https://vincent0x1999.github.io/Telink.Content/img/banner/hongbao.png');
+    background-size: 80% auto;
+    background-color: #E2443D;
+    /* border-radius: 10px; */
+
+    border: #E2443D 1px solid;
+}
+.activitylotter_prize_currency_amount{
+    margin-top: 165px;
+    text-align: center;
+    font-size: 1.2em;
+    font-weight: 600;
+    color: #FADFA4;
+}
+.activitylotter_prize_currency_amount .tag{
+    font-size: 0.8em;
+    font-weight: 500;
+    border-radius: 5px;
+    margin-right: 5px;
+    padding: 3px;
+}
+
+.activitylotter_prize_img img{
+    height: 100%;
+}
+
+
+
+.activitylotter_submit{
+    margin: 0 30px;
+    position: relative;
+    text-align: center;
+}
+
+.activitylotter_submit .remark{
+    font-size: 0.8em;
+    color: #969696;
+    background-color: #fff;
+    border-radius: 10px;
+    display: inline;
+    padding: 2px 5px;
+    margin: 0 auto;
+}
+
+
+
+
+.activitylotter_parts{
+    text-align: center;
+    color: #949494  ;
+    margin: 25px 0 5px 0;
+}
+.activitylotter_mywinner .number{
+    color: #FF6F61;
+}
+
+.activitylotter_tip{
+  color:#969696;
+}
+.activitylotter_tip div{
+    margin: 5px 0;
+    padding: 2px 5px;
+}
+#activitylotter_tip_button{
+    text-align: center;
+    margin: 10px 0;
+}
+
+
+
+
+
+.hongbao{
+    background:url('../../image/public/red_packet/back.png');
+    /*background:#FFF;*/
+    background-size: 100% 100%;
+    /*filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000, endColorstr=#99000000);
+    /* For IE 8*/
+    /*-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000, endColorstr=#99000000)";*/
+    width: 75%;
+    height: 17.5rem;
+    /*line-height: 15rem;*/
+    margin-left: 12.5%;
+    margin-top: 8rem;
+    border-radius:0.5rem;
+    /*text-align: center;*/
+  }
+  .open_div{
+    display:flex;justify-content:center;
+  }
+  .open_back{
+    background-image:url('../../image/public/red_packet/open_back.png');
+    background-size: 100% 100%;
+    width:5.6rem;
+    height:5.6rem;
+    margin-top: 3rem;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    /*transform: rotateY(180deg);
+    -webkit-transform: rotateY(180deg);*/
+  }
+  @keyframes move {
+      0% {
+      　　transform: rotateY(0deg);
+       　 -webkit-transform: rotateY(0deg);
+      }
+      100% {
+         transform: rotateY(360deg);
+         -webkit-transform: rotateY(360deg);
+      }
+  }
+
+
+  
+
+
+
