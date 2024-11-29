@@ -31,6 +31,7 @@ function doAction_Init_callback(data)
             btn.innerHTML=btnstr;
             if(data.today){
                 btn.addEventListener('click', () => {
+                    setwaithandle(btn);
                     doAction("Submit");
                 });
             }
