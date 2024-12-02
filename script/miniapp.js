@@ -8,7 +8,9 @@
         
         Telegram.WebApp.ready();
 
-        if (window.history.length > 1){
+        if (window.app == 'Index') {
+            Telegram.WebApp.BackButton.hide();
+        }else if (window.history.length > 1){
             Telegram.WebApp.BackButton.show();
                 Telegram.WebApp.BackButton.onClick(function() {
                     window.history.back();
