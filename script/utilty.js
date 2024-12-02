@@ -270,10 +270,14 @@ function setLanguage(culture) {
     location.reload();
 }
 function language(key){
-    if (window.Language[key]) {
-        return window.Language[key];
-    }
-    return key;
+    // if (window.Language[key]) {
+    //     return window.Language[key];
+    // }
+    // return key;
+    if (Language[key]) {
+            return Language[key];
+        }
+        return key;
 }
 function setwaithandle(handleElement){
         window.waithanle=handleElement;

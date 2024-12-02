@@ -8,20 +8,36 @@
         
         Telegram.WebApp.ready();
 
-        if (window.app == 'Index') {
+        if (window.app === 'Index') {
             Telegram.WebApp.BackButton.hide();
-        }else if (window.history.length > 1){
-            Telegram.WebApp.BackButton.show();
-                Telegram.WebApp.BackButton.onClick(function() {
-                    window.history.back();
+        } else {
+            if (window.history.length > 1){
+                Telegram.WebApp.BackButton.show();
+                Telegram.WebApp.BackButton.onClick(() => {
+                    if (document.referrer && document.referrer.toLowerCase().includes('/index')) {
+                        window.location.href = 'index';
+                    } else {
+                        // 否则返回上一页
+                        history.back();
+                    }
                 });
-            // if (typeof isSupportBack != 'undefined' && isSupportBack) {
-            //     Telegram.WebApp.BackButton.show();
-            //     Telegram.WebApp.BackButton.onClick(function() {
-            //         window.history.back();
-            //     });
-            // }
+            }
         }
+        // if (window.app == 'Index') {
+        //     Telegram.WebApp.BackButton.isVisible=false;
+        // }else 
+        // if (window.history.length > 1){
+        //     Telegram.WebApp.BackButton.show();
+        //         Telegram.WebApp.BackButton.onClick(function() {
+        //             window.history.back();
+        //         });
+        //     // if (typeof isSupportBack != 'undefined' && isSupportBack) {
+        //     //     Telegram.WebApp.BackButton.show();
+        //     //     Telegram.WebApp.BackButton.onClick(function() {
+        //     //         window.history.back();
+        //     //     });
+        //     // }
+        // }
         Telegram.WebApp.expand();
         Telegram.WebApp.disableVerticalSwipes();
     }catch(e){
