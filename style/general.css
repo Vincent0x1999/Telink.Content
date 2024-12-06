@@ -232,6 +232,13 @@ button,.button {
     margin: 40px 0 20px 0;
     text-align: center;
 }
+.title3{
+    color: #fff;
+    font-size: 1.2em;
+    font-weight: bold;
+    margin: 10px 0 10px 0;
+    text-align: center;
+}
 .remark{
     color:#969696 ;
     font-size: 0.9em;
@@ -721,10 +728,11 @@ button,.button {
     background-color: rgba(0, 0, 0, 0.5); /* 半透明黑色背景 */
     opacity: 0;
     transition: opacity 0.5s ease-in-out;
-    z-index: 0 /* 确保在弹出框之下 */
+    z-index: 0; /* 确保在弹出框之下 */
 }
+
 .overlay.show {
-    opacity: 2;
+    opacity: 1;
 }
 
 .tip_bottom.show {
@@ -802,6 +810,7 @@ button,.button {
     margin: 0 5px;
     cursor: pointer;
 } */
+
 
 
 

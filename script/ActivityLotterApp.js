@@ -218,9 +218,9 @@ async function doAssist(action,index,param){
     }
 }
 async function inchat(chatid){
-    alert(chatid);
+    // alert(chatid);
    const result=await runWebFunc("IsUserInChat",{chatid:chatid});
-    alert(result);
+    // alert(result);
 }
 function displayOnFinish(data){
     setDisplay("activitylotter_finish",true);

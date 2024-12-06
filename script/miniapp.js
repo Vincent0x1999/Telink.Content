@@ -374,7 +374,7 @@ async function runWebFunc(action,param=null,callback=null){
             initdata: getTgInitData(),
             action: action
         };
-        if(curObj!=null){
+        if (typeof curObj !== 'undefined' && curObj !== null){
             data.activityid=curObj.Id;
         }
         if (param !== null) {
@@ -382,7 +382,11 @@ async function runWebFunc(action,param=null,callback=null){
         }
         const jsonstr = JSON.stringify(data);
         processwaithandle();
-        const result =await doWebService('GeneralWebServices', action, 'POST', '',jsonstr);
+        let _serviceurl="GeneralWebServices";
+        if (typeof window.serviceUrl !== 'undefined' && window.serviceUrl!="") {
+            _serviceurl=window.serviceUrl;
+        }
+        const result =await doWebService(_serviceurl, action, 'POST', '',jsonstr);
         if (result.Result) {
             if (callback && typeof callback === 'function') {
                 callback(result.Data);
@@ -392,7 +396,14 @@ async function runWebFunc(action,param=null,callback=null){
                 return result.Data;
             }
         } else {
-            processException(result);
+            if (result.Code!=null) {
+                if (result.Code=="NoAccess") {
+                    
+                    document.body.innerHTML=`<div class="fail">${language("m_NoAccess")}</div>`;
+                }
+            }else{
+                processException(result);
+            }
         }
     }catch(e){
         processException(e);
