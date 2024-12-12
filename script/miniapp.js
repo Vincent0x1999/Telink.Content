@@ -399,7 +399,7 @@ async function runWebFunc(action,param=null,callback=null){
             if (result.Code!=null) {
                 if (result.Code=="NoAccess") {
                     
-                    document.body.innerHTML=`<div class="fail">${language("m_NoAccess")}</div>`;
+                    document.body.innerHTML=`<div class="fail">${language("m_NoAccess")}</div><div class="center">userid:${Telegram.WebApp.initDataUnsafe.user.id}</div>`;
                 }
             }else{
                 processException(result);
