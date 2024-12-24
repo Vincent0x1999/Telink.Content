@@ -91,6 +91,10 @@ video {
     border-radius: 10px;
     overflow: hidden;
 }
+.item_Group{
+    background-color: #FDF4E3;
+    border:#FAE9DF 2px solid;
+}
 .item_Activity_banner{
     background: linear-gradient(135deg, #F44F2A 25%, #FF6F61 75%);
     color: #FFF3CD;
@@ -222,7 +226,7 @@ video {
     height: 100%;
 } */
 .activitylotter_prize{
-    margin: 50px 30px 10px 30px;
+    margin: 20px 30px 10px 30px;
     position: relative;
     overflow:visible;
     padding: 0px;

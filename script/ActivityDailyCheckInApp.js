@@ -1,4 +1,5 @@
 ﻿const isTopToolBar = true;
+const isBottomToolBar=true;
 async function doOnPageLoad() {
     doAction("Init");
 }

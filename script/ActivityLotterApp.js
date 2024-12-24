@@ -1,74 +1,91 @@
-﻿const isTopToolBar=true;
+﻿const isBottomToolBar=true;
+const isTopToolBar=true;
 let curTipbottom;
+let cryptoaddressform;
 async function doOnPageLoad() {
     
     try{
-     const prize=curObj.Ext.PrizeInfo;
-     const prizesindex=Object.keys(prize);
-     let htmls=[];
-     for(let i=0;i<prizesindex.length;i++)
-     {
-         const prizeinfo=prize[i+1];
-         const prizelevelstr=prizesindex.length==1?language("g_Prize"):`${i+1}${language("a_l_th")}`;
-         switch(prizeinfo.Type)
-         {
-             case Dictionary.Activity.Prize.Type.Currency:
-                let receivestr="";
-                if(prizeinfo.Num>1){
-                    receivestr=prizeinfo.ReceiveType==Dictionary.Activity.Prize.ReceiveType.Currency_Lucky?language("a_l_Lucky"):language("a_l_Equal");
-                }else{
-                    receivestr=language("a_l_Exclusive");
-                }
-                 htmls.push(`
-                     <div class="activitylotter_prize_currency">
-                         <div class="activitylotter_prize_currency_amount">
-                             <span class="tag">${receivestr}</span>${prizeinfo.Currency.Num} ${language("g_"+prizeinfo.Currency.Unit)}
-                         </div>
-                         <div class="tag1 bottomleft">
-                             ${prizeinfo.Num} ${language("a_l_servings")}
-                         </div>
-                     </div>
-                 <div class="title center">${prizelevelstr}</div>
-                 <div class="title1">${prizeinfo.Name}</div>
-                 `);
-                 break;
-             case Dictionary.Activity.Prize.Type.PhysicalGoods:
-                 htmls.push(`
-                     <div class="activitylotter_prize_img">
-                        <img src="${prizeinfo.Img}" >
-                         <div class="tag1 bottomleft">
-                             ${prizeinfo.Num} ${language("a_l_servings")}
-                         </div>
-                     </div>
-                 <div class="title center">${prizelevelstr}</div>
-                 <div class="title1">${prizeinfo.Name}</div>
-                 `);
-                 break;
-             case Dictionary.Activity.Prize.Type.VirtualGoods:
-                 break;
-             case Dictionary.Activity.Prize.Type.Coupon:
-                 break;
-         }
-     }
-     const c1=new custom_carousel("activitylotter_prize",htmls);
- 
-      doAction("Init");
+        if (curObj == null) {
+            return;
+        }
+        displayPrizeInfo();
+        doAction("Init");
+    }catch(e)
+    {
+        alert(e);
 
-
-
- 
-     }catch(e)
-     {
-         alert(e);
- 
-     }
+    }
+ }
+ function displayPrizeInfo(){
+    const prize=curObj.Ext.PrizeInfo;
+    const prizesindex=Object.keys(prize);
+    let htmls=[];
+    for(let i=0;i<prizesindex.length;i++)
+    {
+        const prizeinfo=prize[i+1];
+        const prizelevelstr=prizesindex.length==1?language("g_Prize"):`${i+1}${language("a_l_th")}`;
+        switch(prizeinfo.Type)
+        {
+            case Dictionary.Activity.Prize.Type.Currency:
+               let receivestr="";
+               if(prizeinfo.Num>1){
+                   receivestr=prizeinfo.ReceiveType==Dictionary.Activity.Prize.ReceiveType.Currency_Lucky?language("a_l_Lucky"):language("a_l_Equal");
+               }else{
+                   receivestr=language("a_l_Exclusive");
+               }
+                htmls.push(`
+                    <div class="activitylotter_prize_currency">
+                        <div class="activitylotter_prize_currency_amount">
+                            <span class="tag">${receivestr}</span>${prizeinfo.Currency.Num} ${language("g_"+prizeinfo.Currency.Unit)}
+                        </div>
+                        <div class="tag1 bottomleft">
+                            ${prizeinfo.Num} ${language("a_l_servings")}
+                        </div>
+                    </div>
+                <div class="title center">${prizelevelstr}</div>
+                <div class="title1">${prizeinfo.Name}</div>
+                `);
+                break;
+            case Dictionary.Activity.Prize.Type.PhysicalGoods:
+                htmls.push(`
+                    <div class="activitylotter_prize_img">
+                       <img src="${prizeinfo.Img}" >
+                        <div class="tag1 bottomleft">
+                            ${prizeinfo.Num} ${language("a_l_servings")}
+                        </div>
+                    </div>
+                <div class="title center">${prizelevelstr}</div>
+                <div class="title1">${prizeinfo.Name}</div>
+                `);
+                break;
+            case Dictionary.Activity.Prize.Type.VirtualGoods:
+                break;
+            case Dictionary.Activity.Prize.Type.Coupon:
+                break;
+        }
+    }
+    const c1=new custom_carousel("activitylotter_prize",htmls);
  }
  function displayOnNormal(data){
     setDisplay("activitylotter_normal",true);
     const finish=curObj.Ext.FinishRule;
+    const nowtime = getNowUtcTime().timespan;
+    const starttime = new Date(curObj.StartTime).getTime();
+    if(nowtime<starttime){
+        setContent('activitylotter_progress_title',`${language("g_DisStart")}:`);
+        const countdownToEnd = new custom_countdownTimer('activitylotter_progress_content', curObj.StartTime,function(){
+            displayOnNormal(data);
+        });
+        countdownToEnd.start();
+       return;
+    }
+
+
     //Activity State
     if(finish.Type==Dictionary.Activity.FinishType.ByTime){
-        setContent('activitylotter_progress',language("a_l_bytime")+convertUtcToLocal(finish.Time)+"(UTC)");
+        setContent('activitylotter_progress_title',`${language("g_DisToDraw")}:`);
+        const countdownToEnd = new custom_countdownTimer('activitylotter_progress_content', curObj.EndTime);
+        countdownToEnd.start();
     }else if(finish.Type==Dictionary.Activity.FinishType.ByPeopleNum){
          new custom_progress ("activitylotter_progress",finish.Num,data.Status.CurrPart,
             {
@@ -186,20 +203,18 @@ async function InitAssist(){
             }
             html+=`</div>`;
             setContent("activitylotter_assist",html);
+            
             if(todotask.length>0){
+                let docount=0;
+                let isdone=false;
                 for(let i=0;i<todotask.length;i++){
                     doAction("Assist",{index:todotask[i]},function(data){
+                        docount++;
                         if(data.Result){
+                            isdone=true;
+                        };
+                        if(isdone && docount==todotask.length){
                             InitAssist();
-                            // const element = document.getElementById('assisttaks_'+todotask[i]);
-                            // if (element) {
-                            //     element.classList.remove('task');
-                            //     element.classList.add('taskfinish');
-                            // }
-                            // const elementbtn = document.getElementById('assisttaks_btn_'+todotask[i]);
-                            // if (elementbtn) {
-                            //     elementbtn.classList.add('hidden');
-                            // }
                         }
                     });
                 }
@@ -239,18 +254,21 @@ function displayOnFinish(data){
        }
        htmlwinner+=`</div></div>`;
    }
-   let htmlmywinner=data.IsWinner?language("a_l_win").replace("{0}",data.WinLevel):language("a_l_lose");
-
+   let htmlmywinner=data.IsWinner?language("a_l_win").replace("{0}",data.WinLevel)+language("a_l_th"):language("a_l_lose");
+   htmlmywinner=`<div class="contentpanel1">`+htmlmywinner+`</div>`;
+   setContent("activitylotter_mywinner",htmlmywinner);
    setContent("activitylotter_winnerinfo",htmlwinner);
 
    if(data.IsWinner){
+    let htmlmywinnerinfo="";
         if(data.ReceiveType==Dictionary.Activity.Prize.ReceiveType.PhysicalGoods_Delivery){
                 if(data.Wininfo!=null){
-                        htmlmywinner+=`
-                        <div>${language("a_l_receivetitle")}</div>
-                        <div>${language("g_Recipient")}:${data.Wininfo.Name}</div>
-                        <div>${language("g_Phone")}:${data.Wininfo.Phone}</div>
-                        <div>${language("g_Address")}:${data.Wininfo.Address}</div>
+                    htmlmywinnerinfo+=`<div class="contentpanel1">
+                            <div>${language("a_l_receivetitle")}</div>
+                            <div>${language("g_Recipient")}:${data.Wininfo.Name}</div>
+                            <div>${language("g_Phone")}:${data.Wininfo.Phone}</div>
+                            <div>${language("g_Address")}:${data.Wininfo.Address}</div>
+                        </div>
                         `;
                 }else{
                     curTipbottom=new tip_bottom(`
@@ -262,44 +280,72 @@ function displayOnFinish(data){
                         <div class="form_input"><input id="address_phone" type="text"></div>
                         <div class="form_label">${language("g_Address")}:</div>
                         <div class="form_input"><textarea id="address_address" rows="4" cols="50"></textarea></div>
-                        <div class="center"><button onclick='setWinnerInfo("${data.ReceiveType}");'>${language("g_submit")}</button></div>
+                        <div class="center"><button onclick='setWinnerInfo(${JSON.stringify(data)});'>${language("g_submit")}</button></div>
                         `);
                         curTipbottom.show();
                 }
         }else if(data.ReceiveType==Dictionary.Activity.Prize.ReceiveType.Currency_Equal || data.ReceiveType==Dictionary.Activity.Prize.ReceiveType.Currency_Lucky){
             if(data.Wininfo!=null){
-                    htmlmywinner+=`
-                    <div>${language("a_l_receivetitle2")}:</div>
-                    <div>${language("g_award")}:${data.Wininfo.Amount.Num} ${data.Wininfo.Amount.Unit}</div>
-                    `;
+                    if(data.Wininfo.Amount.Type==Dictionary.Currency.Type.Point){
+                        htmlmywinnerinfo+=`
+                        <div class="contentpanel1">
+                        <div>${language("a_l_receivetitle2")}:</div>
+                        <div>${language("g_award")}:${data.Wininfo.Amount.Num} ${data.Wininfo.Amount.Unit}</div>
+                        </div>
+                        `;
+                    }else if(data.Wininfo.Amount.Type==Dictionary.Currency.Type.Crypto && data.Wininfo.ApplicationId!=null){
+                        doAction("GetWinnerWithdrawApplication",null,function(result){
+                            let applicationstr="";
+                            if(result.State==Dictionary.Application.State.Pending){
+                                applicationstr+=language("a_l_receivetitle3");
+                            }else if(result.State==Dictionary.Application.State.Success){
+                                applicationstr+=language("a_l_receivetitle4");
+                            }
+                            const appextobj=JSON.parse(result.Ext);
+                            applicationstr+=`<br />(${appextobj.To.Num} ${appextobj.To.Unit})`;
+                            setContent("activitylotter_mywinnerInfo",`
+                                <div class="contentpanel1">
+                                   ${applicationstr}
+                                </div>
+                                `); 
+                        });
+                        
+                        
+                       
+
+                    }
             }else{
+                const prizesindex=Object.keys(curObj.Ext.PrizeInfo);
+                const prizetitle=prizesindex.length==1?language("g_Prize"):(data.WinLevel+language("a_l_th"));
+               
                 curTipbottom=new tip_bottom(`
-                    <div>${language("a_l_win").replace("{0}",data.WinLevel)}</div>
-                    <div>${language("g_award")}:</div>
-                    <div class="form_input">${data.PrizeInfo.Num} ${language("g_"+data.PrizeInfo.Unit)}</div>
-                    <div class="form_button"><button onclick='setWinnerInfo("${data.ReceiveType}");'>${language("g_receive")}</button></div>
+                    <div class="title center">${language("a_l_win").replace("{0}",prizetitle)}</div>
+                    <div class="center"><span class="number" style="font-size:1.5em;margin:5px">${data.PrizeInfo.Num}</span> ${language("g_"+data.PrizeInfo.Unit)}</div>
+                    <div id="otherform"></div>
+                    <div class="form_button center" style="margin-top:20px">
+                        <button onclick='setWinnerInfo(${JSON.stringify(data)});'>${language("g_receive")}</button>
+                    </div>
+                    <div class="form_input remark" style="margin-top:10px">
+                    ${language("a_l_ContactUs")}
+                    <a href="#none" onclick="tgOpenWindow('https://t.me/TelinkChat');">Telink Group</a></div>
+                    
                     `);
                     curTipbottom.show();
-            }
-        }else if(data.ReceiveType==Dictionary.Activity.Prize.ReceiveType.ContactUs){
-                // if(data.Wininfo!=null){
-                //     htmlmywinner+=`
-                //     <div>${language("a_l_receivetitle2")}:</div>
-                //     <div>${language("g_award")}:${data.Wininfo.Amount.Num} ${data.Wininfo.Amount.Unit}</div>
-                //     `;
-                // }else{
-                    curTipbottom=new tip_bottom(`
-                        <div style="margin:10px 0" class="remark">${language("a_l_ContactUs")}</div>
-                        <div class="center" style="margin:8px 0"><button onclick="tgOpenWindow('https://t.me/TelinkChat');">Telink Group</button></div>
-                        `);
-                        curTipbottom.show();
-                // }
+                    if(data.PrizeInfo.Unit==Dictionary.Crypto.Token.USDT){
+                        cryptoaddressform=new custom_cryptoaddressform("otherform",{
+                            token:language("g_withtoken"),
+                            network:language("g_withnetwork"),
+                            address:language("g_withaddress"),
+                        });
+                        cryptoaddressform.show();
+                    }
+                    
 
-           
+            }
         }
-       
+        setContent("activitylotter_mywinnerInfo",htmlmywinnerinfo);  
    }
-   setContent("activitylotter_mywinner",htmlmywinner);
+   
 }
 async function showjoinInTip()
 {
@@ -370,31 +416,7 @@ async function doJoinIn(index)
                     doAction("Init");
                     curTipbottom.close();
                 });
-            // await doAction("GetStarsPaymentUrl",{index:index,Action:Dictionary.Activity.Action.PaymentToJoinIn},function(data){
-            //     if(!data.Result){
-            //         tgAlert(data.Message);
-            //         return;
-            //     }
-            //     Telegram.WebApp.openInvoice (data.Message ,  ( status )  =>  { 
-
-            //         if  ( status ==  "paid" )  { 
-            //             try{
-            //                 setTimeout(() => {
-            //                     doAction("Init");
-            //                 }, 1000);
-            //                curTipbottom.close();
-            //             }catch(e)
-            //             {
-            //                 alert(e);
-            //             }
-            //             // setTimeout(() => {
-            //             //     curTipbottom.close();
-            //             // }, 8000);
-            //             // doAction("Init");
-            //         } 
-            //       } ) ;
-
-            //    });
+           
         }
     }
 
@@ -403,77 +425,6 @@ async function doJoinIn(index)
         alert(e);
    }
 }
-// async function showJoinTip(index)
-// {
-//     try{
-//         await connectBot();
-//         const part=curObj.Ext.Participate[index];
-//         if(part.Action=Dictionary.Activity.Action.TopUp ){
-//             if(part.Currency.Type==Dictionary.Currency.Type.Point)
-//             {
-//                 curTipbottom=new tip_bottom(`
-//                     <div id="activitylotter_tip" class="activitylotter_tip">
-//                         <div>${language("a_l_paytitle").replace("{0}",part.Currency.Num).replace("{1}",language("g_"+part.Currency.Unit))}</div>
-//                         <div>${language("g_balance")}:<span id="control_UserAmount"></span> ${language("g_"+part.Currency.Unit)}</div>
-//                         <div id="activitylotter_tip_button"></div>
-//                     </div>
-//                 `);
-//                 curTipbottom.show();
-//                 const amount =await initControl_UserAccount();
-//                 if(amount>=part.Currency.Num)
-//                 {
-//                     const username=getTgUser().first_name;
-//                     setContent("activitylotter_tip_button",`
-//                         <button class="button3" onclick='doAction("PointToJoinIn",{index:${index},username:"${username}"})'>${language("g_submit2")}</button>
-//                         `)
-//                 }else{
-//                     setContent("activitylotter_tip_button",`
-//                        ${language("m_notenough").replace("{0}",part.Currency.Unit)}
-//                         `)
-//                 }
-//             }else if(part.Currency.Type==Dictionary.Currency.Type.Crypto){
-//                 curTipbottom=new tip_bottom(`
-//                     <div id="activitylotter_tip" class="activitylotter_tip">
-//                         <div>
-//                             ${language("a_l_paytitle").replace("{0}",part.Currency.Num).replace("{1}",language("g_"+part.Currency.Unit))}
-//                         </div>
-//                         <div class="center"><div id="ton-connect"></div></div>
-//                         <div id="activitylotter_tip_button"></div>
-//                     </div>
-//                 `);
-//                 curTipbottom.show();
-//                 TonLib.initTonConnect("ton-connect",function(isconected){
-//                     if(isconected)
-//                     {
-//                         setContent("activitylotter_tip_button",`<button class="button3" onclick="transferUSDT(${part.Currency.Num},${index})">${language("g_pay")} ${part.Currency.Num} ${language("g_"+part.Currency.Unit)} </button>`);
-//                     }else{
-//                         setContent("activitylotter_tip_button","");
-//                     }
-//                 });
-//             }else if(part.Currency.Type==Dictionary.Currency.Type.Stars){
-//                 // curTipbottom=new tip_bottom(`
-//                 //     <div id="activitylotter_tip" class="activitylotter_tip">
-//                 //         <div>
-//                 //             ${language("a_l_paytitle").replace("{0}",part.Currency.Num).replace("{1}",language("g_"+part.Currency.Unit))}
-//                 //         </div>
-//                 //         <div id="starspaybutton" class="center"></div>
-//                 //     </div>
-//                 // `);
-//                 // curTipbottom.show();
-//                 await doAction("GetStarsPaymentUrlToJoinin",{index:index},function(data){
-//                     toPage(data);
-//                     // timer(function(){doAction("Init");},2000);
-//                     // alert(data);
-//                     // window.open(data);
-//                     // setContent("starspaybutton",`<a class="button3" href="${data}">${language("g_pay")} ${part.Currency.Num} ${language("g_"+part.Currency.Unit)} </a>`);
-//                 });
-//             }
-//         }
-//     }catch(e)
-//     {
-//         alert(e);
-//     }
-// }
 
    
                   
@@ -525,31 +476,11 @@ async function transferUSDT(amount,index)
     }
 }
 
-
-   
-
-
-
-// function doAction_PointToJoinIn_callback(data)
-// {
-//     if(data.Result){
-//         curTipbottom.updateHtml(`<div class="success">${language("m_payok1")}</div>`);
-//         setTimeout(() => {
-//             curTipbottom.close();
-//         }, 2000);
-//         doAction("Init");
-            
-//     }else{
-//         tgAlert(data.Message)
-//     }
-    
-// }
-
-async function setWinnerInfo(prizeReceive)
+async function setWinnerInfo(winnerdata)
 {
     try{
         let param=null
-        if(prizeReceive==Dictionary.Activity.Prize.ReceiveType.PhysicalGoods_Delivery){
+        if(winnerdata.ReceiveType==Dictionary.Activity.Prize.ReceiveType.PhysicalGoods_Delivery){
             
             const address_name=getContent("address_name");
             const address_phone=getContent("address_phone");
@@ -566,6 +497,17 @@ async function setWinnerInfo(prizeReceive)
                 Name:address_name,
                 Phone:address_phone,
                 Address:address_address
+            };
+        }else if(winnerdata.PrizeInfo.Unit==Dictionary.Crypto.Token.USDT){
+            const toGateway=cryptoaddressform.network();
+            const toAccount=cryptoaddressform.address();
+            const isok=await doFunctionByName('checkAddress_'+toGateway,toAccount);
+            if(toAccount=='' || !isok){
+                tgAlert(language("g_withaddress")+language("m_formaterror"));
+                return;
+            }
+            param={
+                toAccount:toAccount
             };
         }
         const result=await doAction("SetWinnerInfo",param);
@@ -591,8 +533,12 @@ function doAction_Init_callback(data) {
             displayOnFinish(data);
         }
         setContent("activitylotter_parts_total",data.Status.CurrPart);
+        doOnInited();
     }catch(e)
     {
         alert(e);
     }
+}
+function doOnInited(){
+    return;
 }

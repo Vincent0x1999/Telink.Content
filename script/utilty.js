@@ -693,13 +693,28 @@ class custom_progress {
         return this.container.innerHTML;
     }
 }
-
+function getNowUtcTime() {
+    const now = new Date();
+    const utcYear = now.getUTCFullYear();
+    const utcMonth = now.getUTCMonth()+1; 
+    const utcDate = now.getUTCDate();
+    const utcHours = now.getUTCHours();
+    const utcMinutes = now.getUTCMinutes();
+    const utcSeconds = now.getUTCSeconds();
+    const utcMilliseconds = now.getUTCMilliseconds();
+    const timestr=utcYear+"-"+utcMonth.toString().padStart(2, '0')+"-"+utcDate.toString().padStart(2, '0')+" "+utcHours.toString().padStart(2, '0')+":"+utcMinutes.toString().padStart(2, '0')+":"+utcSeconds.toString().padStart(2, '0')+"."+utcMilliseconds.toString().padStart(3, '0');
+    return {
+                timestr:timestr,
+                timespan:new Date(timestr).getTime()
+            };
+    // return new Date(Date.UTC(utcYear, utcMonth, utcDate, utcHours, utcMinutes, utcSeconds, utcMilliseconds));
+}
 // countdownTimer.js
-class CountdownTimer {
-    constructor(endTime, onTick, onComplete) {
-        this.endTime = new Date(endTime).getTime();
-        this.onTick = onTick;
-        this.onComplete = onComplete;
+class custom_countdownTimer {
+    constructor(displayElementId, timeUTC, onComplete = null) {
+        this.displayElement = document.getElementById(displayElementId);
+        this.time = new Date(timeUTC).getTime();
+        this.onComplete = onComplete; // 新增的回调函数参数
         this.intervalId = null;
     }
 
@@ -709,24 +724,96 @@ class CountdownTimer {
     }
 
     update() {
-        const now = new Date().getTime();
-        const distance = this.endTime - now;
-
+        const now = getNowUtcTime().timespan; 
+        let distance = this.time - now;
+        // alert(now+"_"+this.time+"_"+distance);
         if (distance < 0) {
             clearInterval(this.intervalId);
+            distance = 0;
             if (this.onComplete) {
-                this.onComplete();
+                this.onComplete(); // 执行回调函数
             }
-            return;
         }
 
-        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+        const days = Math.floor(Math.abs(distance) / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((Math.abs(distance) % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0');
+        const minutes = Math.floor((Math.abs(distance) % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
+        const seconds = Math.floor((Math.abs(distance) % (1000 * 60)) / 1000).toString().padStart(2, '0');
 
-        if (this.onTick) {
-            this.onTick({ days, hours, minutes, seconds });
+        this.displayElement.innerHTML = (days > 0 ? `${days}D ` : '') + `${hours}:${minutes}:${seconds}`;
+    }
+}
+class custom_cryptoaddressform {
+    constructor(panelId, titles) {
+        this.panelId = panelId;
+        this.titles = titles;
+        this.addrselected=null;
+    }
+
+    show() {
+        const panel = document.getElementById(this.panelId);
+        if (!panel) {
+            console.error(`Panel with id ${this.panelId} not found.`);
+            return;
+        }
+        panel.innerHTML=`
+        <div class="form_label">${this.titles.token}</div>
+            <div class="form_input">
+                <div class="icon"><img src="https://vincent0x1999.github.io/Telink.Content/img/icon/crypto/token_usdt.svg" alt="Option 1 Image" /><span id="withdraw_unit">USDT</span></div>  
+            </div>
+            <div class="form_label">${this.titles.network}</div>
+            <div class="form_input">
+                <div class="icon"><img src="https://vincent0x1999.github.io/Telink.Content/img/icon/crypto/chain_ton.svg" alt="Option 1 Image" /><span id="withdraw_gateway">Ton</span></div>  
+            </div>
+            <div class="form_label" style="--columns:auto 1fr">
+                <div>
+                ${this.titles.address}
+                </div>
+                <div class="right">
+                    <div id="withdraw_addresstype"></div>
+                </div>
+            </div>
+            <div class="form_input">
+                <div>
+                    <div id="withdraw_address_wallet" class="center">
+                        <div id="ton-connect" ></div>
+                    </div>
+                    <div id="withdraw_address_input" class="hidden">
+                        <input id="withdraw_inputaddress" type="text" placeholder="Enter wallet address" />
+                    </div>
+                </div>
+            </div>
+        `;
+        this.addrselected=new custom_select("withdraw_addresstype",[
+            { value: 'wallet', html: language('g_connectwallet') },
+            { value: 'input', html: language('g_enteraddress') }
+        ],function(value){
+            if(value=='wallet'){
+                setDisplay('withdraw_address_wallet',true);
+                 setDisplay('withdraw_address_input',false);
+            }else{
+                setDisplay('withdraw_address_wallet',false);
+                setDisplay('withdraw_address_input',true);
+            }
+    
+        });
+        TonLib.initTonConnect("ton-connect",function(isconected){
+          
+        });
+
+    }
+    token(){
+        return "USDT";
+    };
+    network(){
+       return "Ton"
+    };
+    address(){
+        const crypto_addresstype=this.addrselected.getValue();
+        if(crypto_addresstype=="wallet"){
+            return TonLib.getTonConnectUIWalletAddress();
+        }else{
+           return getContent('withdraw_inputaddress');   
         }
     }
 }

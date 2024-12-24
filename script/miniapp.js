@@ -109,10 +109,21 @@ function getTgUser() {
 }
 function doShare(){
     // const page=curObj!=null?"activity":window.app.toLowerCase(); 
-    const page=curObj!=null?"activity":"index"; 
-    const activityId = curObj!=null?`${curObj.Category}-${curObj.Id}`:'0';
+    let page="index";
+    let activityparam="0";
+    if(typeof curGroup !== 'undefined' && curGroup!=null){
+        page="activitygroup";
+        activityparam=`${curGroup.Category}-${curGroup.Id}`;
+        if(typeof curObj !== 'undefined' && curObj!=null){
+            activityparam+=`-${curObj.Id}`;
+        }
+    }else if(typeof curObj !== 'undefined' && curObj!=null){
+        page="activity";
+        activityparam=`${curObj.Category}-${curObj.Id}`;
+    }
+   
     const userId = getTgUser().id;
-    const shareCommand = `share_${page}_${activityId}_${userId}`;
+    const shareCommand = `share_${page}_${activityparam}_${userId}`;
     window.Telegram.WebApp.switchInlineQuery(shareCommand, ['users', 'groups', 'channels']);
 }
 const dict = {
@@ -195,9 +206,10 @@ async function connectBot(){
         }
 }
 async function initControl(){
+    
     initControl_BottomToolBar();
     initControl_UserInfo();
-    initControl_ToolBar();
+    // initControl_ToolBar();
     initControl_Language();
     await initControl_UserAccount();
     await initControl_Message();
@@ -212,7 +224,7 @@ function initControl_BottomToolBar(){
     // bottomtoolbar.id = 'bottom-toolbar';
     bottomtoolbar.classList.add('fixed_bottom');
     bottomtoolbar.classList.add('grid');
-    bottomtoolbar.style.cssText = '--columns:33% 1fr 33%;padding-bottom:25px;background-color: #fff;box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); height: 80px; ';
+    bottomtoolbar.style.cssText = '--columns:33% 1fr 33%;padding-bottom:22px;background-color: #fff;box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); height: 70px; ';
     document.body.appendChild(bottomtoolbar);
     const homeclass=window.app=="Index"?" active":"";
     const myclass=window.app=="My"?" active":"";
@@ -239,10 +251,7 @@ function initControl_UserInfo(){
         
 }
 function initControl_ToolBar(){
-    // if (typeof isTopToolBar === 'undefined' || !isTopToolBar) {
-    //     return;
-    // }
-    if (curObj==null) {
+    if (typeof window.curObj === 'undefined' || window.curObj==null) {
         return;
     }
     const toolbar = document.createElement('div');
@@ -292,6 +301,7 @@ async function initControl_Language() {
     if(!isExist('control_Language')){
         return;
     }
+    
     try{
     let langobj = new custom_select('control_Language', [
         {html:`<div class='icon'><img style='width:20px;height:20px' src='${fileUrl("img/icon/Earth.png")}'>Language</div>`,value:null},
@@ -419,15 +429,19 @@ async function doAction(action, param = null, callback = null) {
     try{
             let data = {
                 initdata: getTgInitData(),
-                activityid: curObj.Id,
                 action: action
             };
+            let category="";
+            if (typeof curObj !== 'undefined' && curObj !== null){
+                data.activityid=curObj.Id;
+                category=curObj.Category;
+            }
             if (param !== null) {
                 data.param = param;
             }
             processwaithandle();
             const jsonstr = JSON.stringify(data);
-            const result = await doWebService('ActivityWebService', 'Do', 'POST', 'type=' + curObj.Category, jsonstr);
+            const result = await doWebService('ActivityWebService', 'Do', 'POST', 'type=' + category, jsonstr);
             if (result.Result) {
                 if (callback && typeof callback === 'function') {
                     callback(result.Data);
@@ -495,12 +509,13 @@ async function payStars(param,funcOnPayOk){
 
 
 async function processShare() {
-    if(window.shareUserId==''){
+    const shareUserId = getUrlParam('shareuserid');
+    if (!shareUserId) {
         return;
     }
     const jsonstr=JSON.stringify({
         initdata: getTgInitData(),
-        shareuserid:window.shareUserId,
+        shareuserid:shareUserId,
         ...(curObj && { activityid: curObj.Id })
     });
      const result =await doWebService('GeneralWebServices', 'RewardShare', 'POST', '',jsonstr);

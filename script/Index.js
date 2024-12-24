@@ -1,10 +1,12 @@
 ﻿const isBottomToolBar=true;
 const isTopToolBar=true;
 function doOnPageLoad(){
-    // const imageContainer = document.getElementById('imgpanel');
-    // const containerWidth = imageContainer.clientWidth;
-    // const containerHeight = imageContainer.clientHeight;
-    // alert(containerWidth + 'x' + containerHeight);
+    const nostart_times=document.getElementsByName("list_endtime");
+    for(var i=0;i<nostart_times.length;i++){
+        const timestr=getData(nostart_times[i].id,"EndTime");
+        const countdownToEnd = new custom_countdownTimer(nostart_times[i].id, timestr);
+        countdownToEnd.start();
+    }
 }
 
 async function initActivityExtInfo() {

@@ -1,7 +1,5 @@
 ﻿
-async function doOnPageLoad() {
-   await runWebFunc("test");
-}
+
 async function sendmessage() {
     let message = getContent("txtmessage");
     const category=getContent("selcategory");
