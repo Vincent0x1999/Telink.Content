@@ -33,39 +33,34 @@ async function displayGroupActivitys(){
         });
         let html="";
     if(runningactivits.length>0){
-        html=`<div class="contentpanel">
-                <div class="title">${language("g_moreCur")}</div>`;
+        html=`<div class="remark">${language("g_moreCur")}</div>`;
         runningactivits.forEach(activity => {
-            html+=`<div class="taskrunning" onclick="toPage('activitypoolappgroup?groupid=${curGroup.Id}&id=${activity.Id}')">
+            html+=`<div class="taskrunning" style="background-color: #F1FBF1;" onclick="toPage('activitypoolappgroup?groupid=${curGroup.Id}&id=${activity.Id}')">
                  <div class="remark right">${language("g_DisToDraw")}：<span id="timedown${activity.Id}" name="timedown" data-time="${activity.EndTime}"></span></div>
                 <div class="left">${activity.Title}</div>
-                <div class="left remark" style="margin-top:5px">${activity.CurrPart}${language("a_l_parts")}</div>
+                <div class="right remark" style="margin-top:5px">${activity.CurrPart}${language("a_l_parts")}</div>
             </div>`;
         });
-        html+=`</div>`;
         setContent("runningactivityspannel",html);
     }
     if(waitingstartactivitys.length>0){
-        html=`<div class="contentpanel">
-                <div class="title">${language("g_moreComing")}</div>`;
+        html=`<div class="remark">${language("g_moreComing")}</div>`;
                 waitingstartactivitys.forEach(activity => {
-            html+=`<div class="taskwaiting" onclick="toPage('activitypoolappgroup?groupid=${curGroup.Id}&id=${activity.Id}')">
+            html+=`<div class="taskwaiting onclick="toPage('activitypoolappgroup?groupid=${curGroup.Id}&id=${activity.Id}')"">
              <div class="remark right">${language("g_DisStart")}：<span id="timedown${activity.Id}" name="timedown" data-time="${activity.StartTime}"></span></div>
                 <div class="left">${activity.Title}</div>
             </div>`;
         });
-        html+=`</div>`;
         setContent("waitingstartactivityspannel",html);
     }
     if(closeactivitys.length>0){
-        html=`<div class="contentpanel">
-                <div class="title">${language("g_moreFinish")}</div>`;
+        html=`<div class="remark">${language("g_moreFinish")}</div>`;
                 closeactivitys.forEach(activity => {
-            html+=`<div class="taskclose" onclick="toPage('activitypoolappgroup?groupid=${curGroup.Id}&id=${activity.Id}')">
+            html+=`<div class="contentpanel" onclick="toPage('activitypoolappgroup?groupid=${curGroup.Id}&id=${activity.Id}')">
                 <div class="left">${activity.Title}</div>
+                <div class="remark right" style="margin-top:3px">${language("g_EndTime")}:${getDateTimestr(activity.EndTime,"yyyy-MM-dd HH:mm(UTC)")} , ${activity.CurrPart}${language("a_l_parts")}</div>
             </div>`;
         });
-        html+=`</div>`;
         setContent("closeactivityspannel",html);
     }
     const nostart_times=document.getElementsByName("timedown");
