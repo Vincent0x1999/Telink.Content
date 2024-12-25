@@ -239,6 +239,11 @@ async function inchat(chatid){
 }
 function displayOnFinish(data){
     setDisplay("activitylotter_finish",true);
+    if(data.Status.Result==null || data.Status.Result==""){
+        setContent("activitylotter_mywinner",`<div class="contentpanel1">${language("a_l_lose")}</div>`);
+        setContent("activitylotter_winnerinfo","");
+        return;
+    }
     const winners=JSON.parse(data.Status.Result);
     const winnersindex=Object.keys(winners);
     let htmlwinner=``;
