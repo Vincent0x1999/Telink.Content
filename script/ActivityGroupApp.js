@@ -38,7 +38,7 @@ async function displayGroupActivitys(){
             html+=`<div class="taskrunning" style="background-color: #F1FBF1;" onclick="toPage('activitypoolappgroup?groupid=${curGroup.Id}&id=${activity.Id}')">
                  <div class="remark right">${language("g_DisToDraw")}：<span id="timedown${activity.Id}" name="timedown" data-time="${activity.EndTime}"></span></div>
                 <div class="left">${activity.Title}</div>
-                <div class="right remark" style="margin-top:5px">${activity.CurrPart}${language("a_l_parts")}</div>
+                <div class="right remark" style="margin-top:5px">${activity.CurrPart==null?0:activity.CurrPart}${language("a_l_parts")}</div>
             </div>`;
         });
         setContent("runningactivityspannel",html);
@@ -58,7 +58,7 @@ async function displayGroupActivitys(){
                 closeactivitys.forEach(activity => {
             html+=`<div class="contentpanel" onclick="toPage('activitypoolappgroup?groupid=${curGroup.Id}&id=${activity.Id}')">
                 <div class="left">${activity.Title}</div>
-                <div class="remark right" style="margin-top:3px">${language("g_EndTime")}:${getDateTimestr(activity.EndTime,"yyyy-MM-dd HH:mm(UTC)")} , ${activity.CurrPart}${language("a_l_parts")}</div>
+                <div class="remark right" style="margin-top:3px">${language("g_EndTime")}:${getDateTimestr(activity.EndTime,"yyyy-MM-dd HH:mm(UTC)")} , ${activity.CurrPart==null?0:activity.CurrPart}${language("a_l_parts")}</div>
             </div>`;
         });
         setContent("closeactivityspannel",html);
