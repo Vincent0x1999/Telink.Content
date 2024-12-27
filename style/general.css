@@ -252,12 +252,14 @@ button,.button {
     color: #fff;
     background-color: #E6605A;
     border-radius: 30px;
-    display: inline-block;
+    padding: 5px;
+    text-align: center;
+    /* display: inline-block;
     background-size: 22px 22px ;
     background-position:6px center;
     background-repeat: no-repeat; 
     padding: 5px 10px 5px 30px;
-    background-image:url('https://vincent0x1999.github.io/Telink.Content/img/icon/lipin.png');
+    background-image:url('https://vincent0x1999.github.io/Telink.Content/img/icon/lipin.png'); */
 }
 .title5{
     color:#C8903D;
@@ -267,6 +269,19 @@ button,.button {
     background-repeat: no-repeat; 
     padding: 5px 10px 5px 33px;
     background-image:url('https://vincent0x1999.github.io/Telink.Content/img/icon/group.png');
+}
+.title_back{
+    color: #fff;
+    background-color: #E6605A;
+    border-radius: 30px;
+    padding: 5px;
+    text-align: center;
+    display: inline-block;
+    background-size: 26px 26px ;
+    background-position:6px center;
+    background-repeat: no-repeat; 
+    padding: 5px 10px 5px 40px;
+    background-image:url('https://vincent0x1999.github.io/Telink.Content/img/icon/back.png');
 }
 .remark{
     color:#969696 ;
@@ -384,6 +399,14 @@ button,.button {
     text-align: center;
     padding: 7px;
     font-weight: 800;
+}
+.contentpanel3{
+    border-radius: 10px;
+    color: #fff;
+    background-color: #09B552;
+    padding: 3px;
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
 .grid {
     display: grid;

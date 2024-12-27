@@ -10,6 +10,7 @@ async function doOnPageLoad() {
         }
         displayPrizeInfo();
         doAction("Init");
+        displayGroupActivityTitle();
     }catch(e)
     {
         alert(e);
@@ -546,4 +547,70 @@ function doAction_Init_callback(data) {
 }
 function doOnInited(){
     return;
+}
+async function GetActivityGroupInfo(){
+    if (typeof window.curObj === 'undefined' || window.curObj==null 
+        || window.curObj.GroupId==null 
+        || window.curObj.GroupId==""
+        || window.curObj.GroupId=="0")  {
+        return null;
+    }
+    return await doAction("GetGroupActivitys",{groupid:window.curObj.GroupId});
+}
+async function displayGroupActivityTitle(){
+    if(!isExist('ActivityGroupInfo')){
+        return;
+    }
+    if (typeof window.curObj === 'undefined' || window.curObj==null 
+        || window.curObj.GroupId==null 
+        || window.curObj.GroupId==""
+        || window.curObj.GroupId=="0")  {
+        return null;
+    }
+    let param={
+        groupid:window.curObj.GroupId,
+        items:"Group,CurrActivitys,WaitDrawActivitys,WaitStartActivitys"
+    };
+    if(curObj!=null){
+        param.curactivityid=curObj.Id;
+    }
+    await doAction("GetGroupActivitys",param ,function(result){
+        let html="";
+       
+        let activity=null;
+        if(result.CurrActivitys!=null && result.CurrActivitys.length>0){
+            activity=result.CurrActivitys[0];
+            html+=`<div>${activity.Title}<span class="remark">(${language("g_moreCur")})</span></div>
+            <div class="remark">${language("g_DisToDraw")}：<span id="timedown${activity.Id}" name="timedown" data-time="${activity.EndTime}"></span></div>`;
+            
+        }else if(result.WaitDrawActivitys!=null && result.WaitDrawActivitys.length>0){
+            activity=result.WaitDrawActivitys[0];
+            html+=`<div>${activity.Title}<span class="remark">(${language("g_moreCur")})</span></div>
+            <div class="remark">${language("g_DisToDraw")}：<span id="timedown${activity.Id}" name="timedown" data-time="${activity.EndTime}"></span></div>`;
+        }else if(result.WaitStartActivitys!=null && result.WaitStartActivitys.length>0){
+            activity=result.WaitStartActivitys[0];
+            html+=`<div>${activity.Title}<span class="remark">(${language("g_moreComing")})</span></div>
+            <div class="remark">${language("g_DisStart")}：<span id="timedown${activity.Id}" name="timedown" data-time="${activity.StartTime}"></span></div>`;
+        }
+        //  if(html=="" && result.Group!=null){
+        //     html+=`<div>${language("g_back")}${result.Group.Title}</div>`;
+        // }
+        if(html!=""){
+        setContent("ActivityGroupInfo",`<div class="contentpanel list_item" style="--columns:1fr 70px">
+            <div>${html}</div>
+            <div class="center"><button class="button3" style="width:95%" onclick="toPage('activity${window.curObj.Category}appgroup?groupid=${curObj.GroupId}')">${language("g_joinin")}</button></div>
+            </div>`);
+        }else{
+            setContent("ActivityGroupInfo",`<div class="contentpanel center" onclick="toPage('activity${window.curObj.Category}appgroup?groupid=${curObj.GroupId}')">
+                <a href="#none">${language("g_back")} ${result.Group.Title}</a>
+                </div>`);
+        }
+        const nostart_times=document.getElementsByName("timedown");
+        for(var i=0;i<nostart_times.length;i++){
+            const timestr=getData(nostart_times[i].id,"time");
+            const countdownToEnd = new custom_countdownTimer(nostart_times[i].id, timestr);
+            countdownToEnd.start();
+        }
+    });
+    
 }

@@ -6,9 +6,11 @@ async function sendmessage() {
     const chatid=getContent("selchat");
     const activityvalue=getContent("selactivity");
     const activityid=activityvalue.split("_")[0];
+    const groupvalue=getContent("selgroup");
+    const groupid=groupvalue.split("_")[0];
     const imgurl=getContent("txtimgurl");
     const buttontxt=getContent("txtbuttontitle");
-    const result=await runWebFunc("SendChatMessage",{chatid:chatid,message:message,category:category,activityid:activityid,buttontxt:buttontxt,imgurl:imgurl});
+    const result=await runWebFunc("SendChatMessage",{chatid:chatid,message:message,category:category,activityid:activityid,groupid:groupid,buttontxt:buttontxt,imgurl:imgurl});
     if(result)
     {
         alert("Message sent successfully");
@@ -18,12 +20,18 @@ function changecontentcategory()
 {
     const category=document.getElementById("selcategory").value;
     const activityp=document.getElementById("activitypanel");
+    const groupp=document.getElementById("grouppanel");
     const buttontitlep=document.getElementById("buttontitlepanel");
     if(category=="activity")
     {
         activityp.style.display="";
+        groupp.style.display="none";
+    }else if(category=="group"){
+        activityp.style.display="none";
+        groupp.style.display="";
     }else{
         activityp.style.display="none";
+        groupp.style.display="none";
     }
     if(category=="0")
     {
@@ -40,7 +48,13 @@ function settxtbuttontitle()
     const selectedIndex = selectElement.selectedIndex;
     const activitytitle = selectElement.options[selectedIndex].text;
     const activityvalue=selectElement.options[selectedIndex].value;
-    const imgurl=activityvalue.split("_")[1];
+    const activityimgurl=activityvalue.split("_")[1];
+
+    const selectElementgroup = document.getElementById("selgroup");
+    const selectedIndexgroup = selectElementgroup.selectedIndex;
+    const grouptitle = selectElementgroup.options[selectedIndexgroup].text;
+    const groupvalue=selectElementgroup.options[selectedIndexgroup].value;
+    const groupimgurl=groupvalue.split("_")[1];
    if(category=="index"){
         setContent("txtbuttontitle","❤️Open Telink");
         setContent("txtimgurl","");
@@ -49,7 +63,10 @@ function settxtbuttontitle()
         setContent("txtimgurl","");
     }else if(category=="activity"){
         setContent("txtbuttontitle",activitytitle);
-        setContent("txtimgurl",imgurl);
+        setContent("txtimgurl",activityimgurl);
+    }else if(category=="group"){
+        setContent("txtbuttontitle",grouptitle);
+        setContent("txtimgurl",groupimgurl);
     }else{
         setContent("txtbuttontitle","");
         setContent("txtimgurl","");

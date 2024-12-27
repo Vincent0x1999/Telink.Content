@@ -205,6 +205,7 @@ async function connectBot(){
              });
         }
 }
+
 async function initControl(){
     
     initControl_BottomToolBar();
@@ -375,6 +376,7 @@ async function initControl_Recommend() {
         processException(result);
      }
 }
+
 //activity.js
 
 
